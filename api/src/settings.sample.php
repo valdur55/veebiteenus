@@ -5,17 +5,17 @@ return [
 
         // Monolog settings
         "logger" => [
-            "name" => "slim-app",
-            "path" => "/tmp/smsinc_api.log",
+            "name" => "veebiteenus",
+            "path" => "/tmp/veebiteenus_api.log",
         ],
         "db" => [
             "host" => "localhost",
-            "user" => "smsinc",
-            "pass" => "",
+            "user" => "khk",
+            "pass" => "khk",
             "options" => array(
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
             ),
-            "dbname" => "smsinc"
+            "dbname" => "khk_veebiteenus"
         ]
     ],
 ];
