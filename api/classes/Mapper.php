@@ -61,7 +61,9 @@ abstract class Mapper {
         $cols = array_diff($this->cols, ["id"]);
 
         foreach ($cols as $value){
-            $values [$value]= $data[$value];
+            if(!empty($data[$value]) and true){
+                $values [$value]= $data[$value];
+            }
         }
         $statement = $this->db->update($values)->table($this->table)->where("id", "=", $data["id"]);
         $result = $statement->execute();
