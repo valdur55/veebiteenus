@@ -5,7 +5,6 @@
  */
 
 use Slim\PDO\Database;
-use Slim\PDO\Statement\SelectStatement;
 
 abstract class Mapper {
 
@@ -16,7 +15,6 @@ abstract class Mapper {
     /**
      * Mapper constructor.
      * @param Database $db
-     * @param $table
      */
     public function __construct(Database $db) {
         $this->db = $db;
@@ -24,19 +22,33 @@ abstract class Mapper {
 
 
     /**
-     * @param $statement
+     * @param string $col
+     * @param $val
+     * @param array $cols
      * @return mixed
      */
-    function getOne(SelectStatement $statement) {
-        return $statement->from($this->table)->execute()->fetch();
+    function filter(string $col, $val, $cols = []) {
+        $cols = empty($cols) ? $this->cols : $cols;
+        return $this->db->select($cols)->where($col, "=", $val)->from($this->table)->execute()->fetch();
     }
 
     /**
-     * @param $statement
+     * @param $id
+     * @param array $cols
      * @return mixed
      */
-    function getAll(SelectStatement $statement){
-        return $statement->from($this->table)->execute()->fetchAll();
+    function getOne($id, $cols = []) {
+        return $this->filter("id", $id, $cols);
+    }
+
+    /**
+     * @param array $cols
+     * @return mixed
+     * @internal param $statement
+     */
+    function getAll(array $cols = []){
+        $cols = empty($cols) ? $this->cols : $cols;
+        return $this->db->select($cols)->from($this->table)->execute()->fetchAll();
     }
 
     function newRow(array $data){
@@ -56,6 +68,11 @@ abstract class Mapper {
         return $result;
     }
 
+    /**
+     * @param array $data
+     * @return int
+     * @throws Exception
+     */
     function updateRow(array $data){
         $values = [];
         $cols = array_diff($this->cols, ["id"]);
@@ -75,7 +92,11 @@ abstract class Mapper {
         return $result;
     }
 
-    function remove($id){
+    /**
+     * @param $id
+     * @return int
+     */
+    function remove(int $id){
         $statement = $this->db->delete()->from($this->table)->where('id', '=', $id);
         $result = $statement->execute();
         return $result;

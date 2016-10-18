@@ -7,16 +7,13 @@ spl_autoload_register(function ($classname) {
     require(__DIR__ . "/src/classes/" . $classname . ".php");
 });
 
-function validate($req_data) {
+function getDoorData($request) {
+    $req_data = $request->getParsedBody();
     $data = [];
     $data["id"] = !empty($req_data["id"]) ?  filter_var($req_data["id"], FILTER_SANITIZE_NUMBER_INT) : "";
     $data["name"] = filter_var($req_data["name"], FILTER_SANITIZE_STRING);
     $data["price"] = filter_var($req_data["price"], FILTER_SANITIZE_NUMBER_FLOAT);
     return $data;
-}
-function getDoorData($request) {
-    $req_data = $request->getParsedBody();
-    return validate($req_data);
 }
 
 
@@ -31,7 +28,7 @@ $app->group('/doors', function () use ($app) {
      */
     $app->get("", function (Request $request, Response $response, $args) {
         $doors = new DoorMapper($this->db);
-        $response = $response->withJSON($doors->all());
+        $response = $response->withJSON($doors->getAll());
         return $response;
     });
 
@@ -44,7 +41,7 @@ $app->group('/doors', function () use ($app) {
 
     $app->get("/{id}", function (Request $request, Response $response, $args) {
         $doors = new DoorMapper($this->db);
-        $result = $doors->one($args["id"]);
+        $result = $doors->getOne($args["id"]);
         if ($result) {
             $response = $response->withJSON($result);
         } else {
@@ -66,7 +63,7 @@ $app->group('/doors', function () use ($app) {
     $app->post("", function (Request $request, Response $response, $args) {
         $data = getDoorData($request);
         $mapper = new DoorMapper($this->db);
-        $result = $mapper->newDoor($data);
+        $result = $mapper->newRow($data);
         $response = $response->withJSON($result);
         return $response;
     });
