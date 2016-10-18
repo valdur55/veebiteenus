@@ -51,6 +51,11 @@ abstract class Mapper {
         return $this->db->select($cols)->from($this->table)->execute()->fetchAll();
     }
 
+    /**
+     * @param array $data
+     * @return string
+     * @throws Exception
+     */
     function newRow(array $data){
         $values = [];
         $cols = array_diff($this->cols, ["id"]);
@@ -60,10 +65,6 @@ abstract class Mapper {
 
         $statement = $this->db->insert($cols)->into($this->table)->values($values);
         $result = $statement->execute();
-
-        if (!$result) {
-            throw new Exception("could not save record");
-        }
 
         return $result;
     }
@@ -84,10 +85,6 @@ abstract class Mapper {
         }
         $statement = $this->db->update($values)->table($this->table)->where("id", "=", $data["id"]);
         $result = $statement->execute();
-
-        if (!$result) {
-            throw new Exception("could not update record");
-        }
 
         return $result;
     }
