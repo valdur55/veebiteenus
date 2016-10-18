@@ -4,7 +4,6 @@
 
 # IntelliJ project files
 .idea
-vendor
 out
 gen
 api/src/settings.php
